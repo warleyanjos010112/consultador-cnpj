@@ -1,4 +1,4 @@
-name: Build Windows Executable
+name: Build Windows Executable (Simple)
 
 on:
   workflow_dispatch:
@@ -11,20 +11,15 @@ jobs:
     - name: Check out repository
       uses: actions/checkout@v4
 
-    - name: Set up Python
-      uses: actions/setup-python@v5
-      with:
-        python-version: '3.11'
-
-    - name: Install dependencies
+    - name: Install dependencies and Build
       run: |
-        python -m pip install --upgrade pip
-        pip install pandas requests openpyxl pyinstaller
-
-    - name: Build executable with PyInstaller
-      run: |
-        # IMPORTANTE: Verifique se "script_final.py" é o nome exato do seu arquivo .py no repositório
-        python -m pyinstaller --onefile --name "ConsultadorCNPJ" "script_final.py"
+        echo "--- Instalando bibliotecas com o Python padrao ---"
+        py -m pip install --upgrade pip
+        py -m pip install pandas requests openpyxl pyinstaller
+        
+        echo "--- Construindo o executavel ---"
+        # IMPORTANTE: Verifique se "script_final.py" é o nome exato do seu arquivo .py
+        py -m pyinstaller --onefile --name "ConsultadorCNPJ" "script_final.py"
 
     - name: Upload artifact
       uses: actions/upload-artifact@v4
