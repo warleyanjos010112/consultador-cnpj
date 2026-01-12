@@ -1,25 +1,36 @@
-name: Build Windows Executable (Simple)
+name: Build Windows Executable on Linux
 
 on:
   workflow_dispatch:
 
 jobs:
   build:
-    runs-on: windows-latest
+    # USAREMOS UBUNTU, QUE É MAIS ESTÁVEL
+    runs-on: ubuntu-latest
 
     steps:
     - name: Check out repository
       uses: actions/checkout@v4
 
-    - name: Install dependencies and Build
+    - name: Set up Python
+      uses: actions/setup-python@v5
+      with:
+        python-version: '3.11'
+
+    - name: Install dependencies
       run: |
-        echo "--- Instalando bibliotecas com o Python padrao ---"
-        py -m pip install --upgrade pip
-        py -m pip install pandas requests openpyxl pyinstaller
+        python -m pip install --upgrade pip
+        pip install pandas requests openpyxl pyinstaller
+
+    - name: Build Windows executable using Wine
+      run: |
+        # Instala o Wine, a camada de compatibilidade do Windows para Linux
+        sudo apt-get update
+        sudo apt-get install -y --no-install-recommends wine64
         
-        echo "--- Construindo o executavel ---"
+        echo "--- Construindo o executavel para Windows ---"
         # IMPORTANTE: Verifique se "script_final.py" é o nome exato do seu arquivo .py
-        py -m pyinstaller --onefile --name "ConsultadorCNPJ" "script_final.py"
+        python -m pyinstaller --onefile --name "ConsultadorCNPJ" "script_final.py"
 
     - name: Upload artifact
       uses: actions/upload-artifact@v4
